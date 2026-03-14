@@ -1,0 +1,8 @@
+fitparse
+sqlalchemy
+psycopg2-binary
+click
+rich
+numpy
+python-fitparse 
+python-dotenv
