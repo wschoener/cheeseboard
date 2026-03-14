@@ -4,3 +4,4 @@ __pycache__/
 .env
 *.fit
 *.log
+launch.json
