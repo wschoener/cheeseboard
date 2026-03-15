@@ -216,7 +216,7 @@ def import_cmd(filepath):
 
     # Iterate over all messages of type "record"
     # (other types include "device_info", "file_creator", "event", etc)
-    logged_run = Run(name="My Run")  # TODO: get name from user input or fit file metadata
+    logged_run = parse_fit(filepath)
 
     with Session() as session:
         session.add(logged_run)

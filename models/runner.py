@@ -1,3 +1,4 @@
+from sqlalchemy.sql.functions import user
 from sqlalchemy import Column, Integer, String, Numeric
 from sqlalchemy.orm import relationship
 from db import Base
@@ -7,6 +8,7 @@ class Runner(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    username = Column(String, unique=True, nullable=False)
 
     height_in = Column(Integer)
     weight_lbs = Column(Integer)
