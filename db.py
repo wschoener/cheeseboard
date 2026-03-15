@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from dotenv import load_dotenv
 
@@ -23,6 +23,10 @@ def init_db():
     print("Database initialized.")
 
 def wipe_db():
-    """Drop all tables. Use with caution!""" 
-    Base.metadata.drop_all(engine, checkfirst=True)
+    """Drop all tables. Use with caution!"""
+    with engine.connect() as conn:
+        conn.execute(text("DROP SCHEMA public CASCADE"))
+        conn.execute(text("CREATE SCHEMA public"))
+        conn.execute(text("GRANT ALL ON SCHEMA public TO running_user"))
+        conn.commit()
     print("Database wiped.")

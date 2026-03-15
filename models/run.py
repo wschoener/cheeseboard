@@ -8,7 +8,7 @@ class Run(Base):
     __tablename__ = "runs"
 
     id            = Column(Integer, primary_key=True)
-    date          = Column(Date, nullable=False)
+    date          = Column(Date)
     name          = Column(String(200))                # activity name from .fit file
     distance_m    = Column(Numeric(10, 2))             # meters — convert to miles/km in display
     run_duration_s    = Column(Integer)                    # seconds
@@ -24,11 +24,10 @@ class Run(Base):
     time_in_zone_5 = Column(Interval)                   # time in HR zone 5 (anaerobic)
 
     elevation_gain_m = Column(Numeric(8, 2))
-    source_file   = Column(String(500))                # original .fit filename
     imported_at   = Column(DateTime, server_default=func.now())
 
-    runner_id     = Column(Integer, ForeignKey("runners.id"), nullable=False)
-    runner        = relationship("Runner", back_populates="runs")
+    # runner_id     = Column(Integer, ForeignKey("runners.id"), nullable=False)
+    # runner        = relationship("Runner", back_populates="runs")
 
     def distance_miles(self):
         """TODO: convert self.distance_m to miles and return."""
