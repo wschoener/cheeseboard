@@ -59,7 +59,7 @@ def hr_to_zone(hr: int) -> int:
     TODO: given a heart rate in bpm, return the zone number (1-5)
     using MAX_HR and ZONE_BOUNDS defined above.
     """
-    pass
+    return 0
 
 
 def speed_to_pace(speed_ms: float) -> int:
@@ -68,7 +68,8 @@ def speed_to_pace(speed_ms: float) -> int:
     Formula: pace_s = 1609.34 / speed_ms
     Return 0 if speed_ms is 0 or None.
     """
-    pass
+    
+    return 0
 
 
 def semicircles_to_degrees(semicircles: int) -> float:
