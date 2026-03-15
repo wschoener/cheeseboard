@@ -1,5 +1,4 @@
 import json
-import anthropic
 import click
 from rich.console import Console
 from rich.markdown import Markdown
@@ -7,7 +6,8 @@ from db import Session
 from models.run import Run
 
 console = Console()
-client  = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
+# change to Ollama or another local LLM client if you want to avoid API calls during development
+# client  = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
 
 
 # @click.command("plan")
