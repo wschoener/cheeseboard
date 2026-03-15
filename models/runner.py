@@ -1,3 +1,4 @@
+from sqlalchemy.sql.functions import user
 from sqlalchemy import Column, Integer, String, Numeric
 from sqlalchemy.orm import relationship
 from db import Base
@@ -7,6 +8,7 @@ class Runner(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    username = Column(String, unique=True, nullable=False)
 
     height_in = Column(Integer)
     weight_lbs = Column(Integer)
@@ -17,8 +19,9 @@ class Runner(Base):
     threshold_hr = Column(Integer)  # optional, can be calculated from max HR if you want to add that later
     threshold_pace_s = Column(Integer)  # optional, can be calculated from splits if you want to add that later
     
-    total_runs = Column(Integer, default=0)
-    total_distance_m = Column(Numeric(12, 2), default=0)
+    # Commenting this out, should be properties created later based on related table data
+    # total_runs = Column(Integer, default=0)
+    # total_distance_m = Column(Numeric(12, 2), default=0)
 
     fivek_PR_time_s = Column(Integer)  # optional, can be calculated from splits if you want to add that later
     tenK_PR_time_s = Column(Integer)
@@ -27,7 +30,6 @@ class Runner(Base):
 
     resting_hr = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     maximum_hr = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
-    # recovery_hr_min = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     recovery_hr_max = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     aerobic_hr_min = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     aerobic_hr_max = Column(Integer)  # optional, can be calculated from fit data if

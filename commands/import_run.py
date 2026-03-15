@@ -214,33 +214,15 @@ def import_cmd(filepath):
 
     fitfile = fitparse.FitFile(filepath)
 
-    # Iterate over all messages of type "record"
-    # (other types include "device_info", "file_creator", "event", etc)
-    logged_run = Run(name="My Run")  # TODO: get name from user input or fit file metadata
+    # create a Run object from the parsed .fit file data, including its Splits, HRZone, and GPSPoints
+    logged_run = parse_fit(filepath)
 
+    # save the Run (and its related Splits, HRZone, and GPSPoints) to the database using Session
     with Session() as session:
         session.add(logged_run)
         session.commit()  # commit to get an ID for the run, which we need for the foreign key in Splits, HRZone, and GPSPoints
 
-    # new_run_messages = fitfile.get_messages()
-    # for record in new_run_messages:
-    #     console.print(f"Message type: {record.name}, fields: {record.fields}")
-
-    # for record in fitfile.get_messages("record"):
-
-        # Records can contain multiple pieces of data (ex: timestamp, latitude, longitude, etc)
-        # for data in record:
-            # print(data.name, data.value, data.units)
-
-            # Print the name and value of the data (and the units if it has any)
-            # if data.units:
-                # console.print(" * {}: {} ({})".format(data.name, data.value, data.units))
-            # else:
-                # console.print(" * {}: {}".format(data.name, data.value))
-            
-            
-
-        # console.print("---")
+    
     # TODO: call parse_fit(filepath) to get parsed data
     # TODO: create a Run, its Splits, HRZone, and GPSPoints
     # TODO: save everything to the DB via Session

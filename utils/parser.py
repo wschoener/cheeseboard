@@ -6,7 +6,7 @@ MAX_HR = 190
 ZONE_BOUNDS = [0.60, 0.70, 0.80, 0.90, 1.0]
 
 
-def parse_fit(filepath: str) -> dict:
+def parse_fit(filepath: str) -> Run:
     """
     Parse a .fit file and return a dict with:
       - run_data: dict of fields for the Run model
@@ -46,12 +46,7 @@ def parse_fit(filepath: str) -> dict:
             # TODO: use HR to increment hr_seconds for the right zone
             pass
 
-    return {
-        "run_data":   run_data,
-        "splits":     splits,
-        "gps_points": gps_points,
-        "hr_zones":   hr_seconds,
-    }
+    return Run(name="My Run")  # placeholder until we implement the parsing logic
 
 
 def hr_to_zone(hr: int) -> int:
