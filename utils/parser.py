@@ -73,4 +73,4 @@ def speed_to_pace(speed_ms: float) -> int:
 
 def semicircles_to_degrees(semicircles: int) -> float:
     """Convert .fit file semicircle coordinates to degrees."""
-    return semicircles / 11930465
+    return semicircles * (180 / 2**31)
