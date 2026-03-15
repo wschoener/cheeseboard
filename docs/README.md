@@ -30,11 +30,12 @@ sudo -i -u postgres psql
 
 Inside psql:
 ```sql
-CREATE DATABASE running;
-CREATE USER running_user WITH PASSWORD 'running';
-GRANT ALL PRIVILEGES ON DATABASE running TO running_user;
-\c running
-GRANT ALL ON SCHEMA public TO running_user;
+CREATE DATABASE cheeseboard;
+CREATE USER cheeseboard_admin WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE cheeseboard TO cheeseboard_admin;
+\c cheeseboard
+GRANT ALL ON SCHEMA public TO cheeseboard_admin;
+ALTER SCHEMA public OWNER TO cheeseboard_admin;
 \q
 ```
 
@@ -61,7 +62,7 @@ pip install -r requirements.txt
 ### Configure the database connection
 Edit `db.py` and update the connection string if needed:
 ```python
-DB_URL = "postgresql+psycopg2://running_user:running@localhost/running"
+DB_URL = "postgresql+psycopg2://cheeseboard_admin:password@localhost/cheeseboard"
 ```
 
 ### Initialize the database (creates all tables)
