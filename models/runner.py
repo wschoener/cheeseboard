@@ -32,8 +32,7 @@ class Runner(Base):
     aerobic_hr_min = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     aerobic_hr_max = Column(Integer)  # optional, can be calculated from fit data if
 
-
-    runs = relationship("Run", back_populates="runner")
+    # runs = relationship("Run", back_populates="runner")
 
     def __repr__(self):
         return f"<Runner(id={self.id}, name='{self.name}')>"

@@ -3,6 +3,7 @@ from db import init_db, wipe_db
 from commands.import_run import import_cmd
 from commands.runs import runs_cmd, run_detail_cmd
 from commands.trends import trends_cmd
+from commands.add_runner import add_runner_cmd
 
 
 @click.group()
@@ -15,6 +16,7 @@ cli.add_command(import_cmd,      name="import")
 cli.add_command(runs_cmd,        name="runs")
 cli.add_command(run_detail_cmd,  name="run")
 cli.add_command(trends_cmd,      name="trends")
+cli.add_command(add_runner_cmd, name="add_runner")
 
 
 @cli.command("init")

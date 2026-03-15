@@ -1,6 +1,8 @@
-# COROS Running App
+# Cheeseboard Running App
 
-A personal CLI running dashboard built on your own `.fit` file exports from COROS. Your data, your way — no subscriptions, no third-party dashboards.
+A personal CLI running dashboard built on your own `.fit` file exports from workout apps. Your data, your way — no subscriptions, no third-party dashboards.
+
+Design the interface / data / plans for whatever your needs are.
 
 ---
 
@@ -8,7 +10,7 @@ A personal CLI running dashboard built on your own `.fit` file exports from CORO
 
 - Python 3.12+
 - PostgreSQL 14+
-- A COROS watch with `.fit` file exports
+- A GPS Fitness watch with `.fit` file exports
 
 ---
 
