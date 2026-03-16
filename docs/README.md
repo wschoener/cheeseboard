@@ -210,3 +210,13 @@ I'd like this to eventually turn into a visual GUI for users to interact with ot
 command line. 
 
 PyQt6 is something to look into for that, as well as PySide6
+
+
+
+
+# Where we are at for testing
+
+python app.py wipe
+python app.py init
+python app.py add_runner
+python app.py import imported_runs/encoded.fit

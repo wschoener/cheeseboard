@@ -1,3 +1,4 @@
+from models.runner import Runner
 import fitparse
 import click
 from rich.console import Console
@@ -207,12 +208,13 @@ etc...
 
 @click.command("import")
 @click.argument("filepath", type=click.Path(exists=True))
-def import_cmd(filepath):
+@click.option("--runner", prompt="Runner username", help="Username of the runner to associate this run with.")
+def import_cmd(filepath, runner):
     """Import a .fit file and store it in the database."""
 
     console.print(f"[bold]Parsing[/bold] {filepath}...")
 
-    fitfile = fitparse.FitFile(filepath)
+    fitfile = fitparse.FitFile(filepath, runner)
 
     # create a Run object from the parsed .fit file data, including its Splits, HRZone, and GPSPoints
     logged_run = parse_fit(filepath)

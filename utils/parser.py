@@ -5,6 +5,9 @@ from models.run import Run
 from models.fit_data import FitData
 from db import Session
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="fitparse")
+
 
 # HR zone thresholds as % of max HR — adjust to your own max HR
 MAX_HR = 190
@@ -40,9 +43,12 @@ def parse_fit(filepath: str) -> Run:
 
     run_uuid = uuid.uuid4()  # generate a new UUID for this run
 
+    run_data["run_duration"] = 0
+
     for message in fitfile.get_messages():
         if message.name == "activity":
             run_data["start_date_time"] = message.get_value("timestamp")
+            run_data["total_timer_time"] = message.get_value("total_timer_time")
 
         elif message.name == "lap":
             # TODO: extract per-split pace, HR, distance, elevation
@@ -69,6 +75,8 @@ def parse_fit(filepath: str) -> Run:
             total_power = message.get_value("accumulated_power")
             fit_data.append(fit_data_entry)  # <-- this line was missing
 
+            run_data["run_duration"] += 1  # assuming each record is 1 second apart, increment total run duration
+
         elif message.name == "activity":
             # TODO: extract activity-level information
             run_data["total_duration_s"] = message.get_value("total_timer_time")
@@ -85,7 +93,7 @@ def parse_fit(filepath: str) -> Run:
 
     # after the for loop:
     with Session() as session:
-        run = Run(id=run_uuid, name="My Run", run_duration_s=run_data.get("total_duration_s"), distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"), avg_hr=avg_hr, max_hr=max_hr, avg_pace_s=avg_pace_s)
+        run = Run(id=run_uuid, name="My Run", distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"), avg_hr=avg_hr, max_hr=max_hr, avg_pace_s=avg_pace_s, total_duration_s=run_data.get("total_timer_time"), run_duration_s=run_data.get("run_duration"))
         session.add(run)
         session.flush()  # inserts the run and makes its ID available without committing yet
         session.add_all([FitData(**entry) for entry in fit_data])
