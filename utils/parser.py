@@ -42,8 +42,9 @@ def parse_fit(filepath: str) -> Run:
             pass
 
         elif message.name == "record":
-            # TODO: extract per-second lat, lon, elevation, HR, speed, distance
-            # TODO: use HR to increment hr_seconds for the right zone
+            # TODO: create fit_data entries for each GPS point, including timestamp, lat/lon, speed, heart rate, 
+            #       and calculate effort pace and HR zone for each point and elevation if available and step_length if available
+            #       and cadence if available
             pass
         elif message.name == "activity":
             # TODO: extract activity-level information
