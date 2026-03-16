@@ -74,9 +74,18 @@ def parse_fit(filepath: str) -> Run:
             run_data["total_duration_s"] = message.get_value("total_timer_time")
             run_data["start_time"] = message.get_value("timestamp")
 
-   # after the for loop:
+
+    # Calculate averages, and min/max values for the Run model based on the fit_data and splits
+    pace_values = [entry["speed"] for entry in fit_data if entry.get("speed") is not None]
+    hr_values = [entry["heart_rate"] for entry in fit_data if entry.get("heart_rate") is not None]
+
+    max_hr = max(hr_values) if hr_values else None
+    avg_hr = int(sum(hr_values) / len(hr_values)) if hr_values else None
+    avg_pace_s = float(sum(pace_values) / float(len(pace_values))) if pace_values else None
+
+    # after the for loop:
     with Session() as session:
-        run = Run(id=run_uuid, name="My Run", run_duration_s=run_data.get("total_duration_s"), distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"))
+        run = Run(id=run_uuid, name="My Run", run_duration_s=run_data.get("total_duration_s"), distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"), avg_hr=avg_hr, max_hr=max_hr, avg_pace_s=avg_pace_s)
         session.add(run)
         session.flush()  # inserts the run and makes its ID available without committing yet
         session.add_all([FitData(**entry) for entry in fit_data])

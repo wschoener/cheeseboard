@@ -15,7 +15,7 @@ class Run(Base):
     distance_m    = Column(Numeric(10, 2))             # meters — convert to miles/km in display
     run_duration_s    = Column(Integer)                    # seconds
     total_duration_s  = Column(Float)                    # seconds — includes pauses
-    avg_pace_s    = Column(Integer)                    # seconds per mile — you calculate this
+    avg_pace_s    = Column(Float)                    # seconds per mile — you calculate this
 
     total_power = Column(Integer)  # watts * seconds, can be used to calculate Training Stress Score (TSS) if you want to add that later
     
@@ -46,4 +46,4 @@ class Run(Base):
         pass
 
     def __repr__(self):
-        return f"<Run {self.date} {self.distance_m}m>"
+        return f"<Run {self.start_date_time} {self.distance_m}m>"
