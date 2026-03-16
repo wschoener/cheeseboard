@@ -10,11 +10,6 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="fitparse")
 
 
-# HR zone thresholds as % of max HR — adjust to your own max HR
-MAX_HR = 190
-ZONE_BOUNDS = [0.60, 0.70, 0.80, 0.90, 1.0]
-
-
 def parse_fit(filepath: str, runner: Runner) -> Run:
     """
     Parse a .fit file and return a dict with:
