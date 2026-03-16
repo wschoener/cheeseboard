@@ -9,6 +9,7 @@ class Run(Base):
 
     id            = Column(Integer, primary_key=True)
     date          = Column(Date)
+    start_time    = Column(DateTime)       # when the run started (not necessarily the same as the file creation time)
     name          = Column(String(200))                # activity name from .fit file
     distance_m    = Column(Numeric(10, 2))             # meters — convert to miles/km in display
     run_duration_s    = Column(Integer)                    # seconds

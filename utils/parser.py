@@ -45,8 +45,12 @@ def parse_fit(filepath: str) -> Run:
             # TODO: extract per-second lat, lon, elevation, HR, speed, distance
             # TODO: use HR to increment hr_seconds for the right zone
             pass
+        elif message.name == "activity":
+            # TODO: extract activity-level information
+            run_data["total_duration_s"] = message.get_value("total_timer_time")
+            run_data["start_time"] = message.get_value("timestamp")
 
-    return Run(name="My Run")  # placeholder until we implement the parsing logic
+    return Run(name="My Run", run_duration_s=run_data["run_duration_s"])  # placeholder until we implement the parsing logic
 
 
 def hr_to_zone(hr: int) -> int:

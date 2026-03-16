@@ -51,6 +51,7 @@ class FitData(Base):
 
     effort_pace = Column(Numeric(10, 4))  # m/s
     distance = Column(Numeric(10, 2))  # m
+    elevation = Column(Numeric(10, 2))  # m 
     enhanced_speed = Column(Numeric(10, 4))  # m/s
     heart_rate = Column(Integer)  # bpm
     position_lat = Column(Float)  # semicircles converted to degrees
