@@ -212,12 +212,13 @@ etc...
 def import_cmd(filepath, runner):
     """Import a .fit file and store it in the database."""
 
+
     console.print(f"[bold]Parsing[/bold] {filepath}...")
 
-    fitfile = fitparse.FitFile(filepath, runner)
+    fitfile = fitparse.FitFile(filepath)
 
     # create a Run object from the parsed .fit file data, including its Splits, HRZone, and GPSPoints
-    logged_run = parse_fit(filepath)
+    logged_run = parse_fit(filepath, runner)
 
     # save the Run (and its related Splits, HRZone, and GPSPoints) to the database using Session
     with Session() as session:

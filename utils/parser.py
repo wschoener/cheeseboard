@@ -2,6 +2,7 @@ import uuid
 from db import Session
 from fitparse import FitFile
 from models.run import Run
+from models.runner import Runner
 from models.fit_data import FitData
 from db import Session
 
@@ -14,7 +15,7 @@ MAX_HR = 190
 ZONE_BOUNDS = [0.60, 0.70, 0.80, 0.90, 1.0]
 
 
-def parse_fit(filepath: str) -> Run:
+def parse_fit(filepath: str, runner: Runner) -> Run:
     """
     Parse a .fit file and return a dict with:
       - run_data: dict of fields for the Run model
