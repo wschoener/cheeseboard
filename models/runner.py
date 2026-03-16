@@ -30,9 +30,13 @@ class Runner(Base):
 
     resting_hr = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
     maximum_hr = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
-    recovery_hr_max = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
-    aerobic_hr_min = Column(Integer)  # optional, can be calculated from fit data if you want to add that later
-    aerobic_hr_max = Column(Integer)  # optional, can be calculated from fit data if
+
+    # optional, can be calculated from max HR if you want to add that later
+    hr_zone_1_stop = Column(Integer)  
+    hr_zone_2_stop = Column(Integer)
+    hr_zone_3_stop = Column(Integer)
+    hr_zone_4_stop = Column(Integer)
+    hr_zone_5_stop = Column(Integer)    
 
     # runs = relationship("Run", back_populates="runner")
 

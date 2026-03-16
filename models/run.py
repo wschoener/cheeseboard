@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, Numeric, Date, DateTime, Interval, ForeignKey
+import uuid
+from sqlalchemy import Column, Integer, String, Numeric, Date, DateTime, Interval, ForeignKey, Float
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from db import Base
 
@@ -7,14 +9,15 @@ from db import Base
 class Run(Base):
     __tablename__ = "runs"
 
-    id            = Column(Integer, primary_key=True)
-    date          = Column(Date)
-    start_time    = Column(DateTime)       # when the run started (not necessarily the same as the file creation time)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)    
+    start_date_time    = Column(DateTime)       # when the run started (not necessarily the same as the file creation time)
     name          = Column(String(200))                # activity name from .fit file
     distance_m    = Column(Numeric(10, 2))             # meters — convert to miles/km in display
     run_duration_s    = Column(Integer)                    # seconds
-    total_duration_s  = Column(Integer)                    # seconds — includes pauses
+    total_duration_s  = Column(Float)                    # seconds — includes pauses
     avg_pace_s    = Column(Integer)                    # seconds per mile — you calculate this
+
+    total_power = Column(Integer)  # watts * seconds, can be used to calculate Training Stress Score (TSS) if you want to add that later
     
     avg_hr        = Column(Integer)                    # bpm
     max_hr        = Column(Integer)

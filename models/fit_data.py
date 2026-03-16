@@ -38,24 +38,28 @@ Example data:
 ---
 
 """
+import uuid
 from sqlalchemy import Column, Integer, String, Numeric, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
+
 from db import Base
 
 class FitData(Base):
     __tablename__ = "fit_data"
     
     id = Column(Integer, primary_key=True)
-    run_id = Column(Integer, ForeignKey("runs.id"), nullable=False)
+    run_id = Column(UUID(as_uuid=True), ForeignKey("runs.id"), nullable=False)    
     timestamp = Column(DateTime, nullable=False)
 
-    effort_pace = Column(Numeric(10, 4))  # m/s
-    distance = Column(Numeric(10, 2))  # m
     elevation = Column(Numeric(10, 2))  # m 
-    enhanced_speed = Column(Numeric(10, 4))  # m/s
     heart_rate = Column(Integer)  # bpm
     position_lat = Column(Float)  # semicircles converted to degrees
     position_long = Column(Float)  # semicircles converted to degrees
     speed = Column(Numeric(10, 4))  # m/s
     step_length = Column(Numeric(10, 2))  # mm
+    cadence = Column(Integer)  # spm
+    heart_rate = Column(Integer)  # bpm
+    heart_rate_zone = Column(Integer)  # 1-5  
 
+    power = Column(Integer)  # watts  

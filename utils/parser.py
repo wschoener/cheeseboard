@@ -1,5 +1,10 @@
+import uuid
+from db import Session
 from fitparse import FitFile
 from models.run import Run
+from models.fit_data import FitData
+from db import Session
+
 
 # HR zone thresholds as % of max HR — adjust to your own max HR
 MAX_HR = 190
@@ -27,15 +32,17 @@ def parse_fit(filepath: str) -> Run:
     fitfile = FitFile(filepath)
 
     run_data   = {}
+    fit_data: list[dict] = []
     splits     = []
     gps_points = []
     hr_seconds = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    total_distance_run = 0.0
+
+    run_uuid = uuid.uuid4()  # generate a new UUID for this run
 
     for message in fitfile.get_messages():
-        if message.name == "session":
-            # TODO: extract total distance, duration, avg HR, max HR,
-            #       elevation gain, start time, sport type
-            pass
+        if message.name == "activity":
+            run_data["start_date_time"] = message.get_value("timestamp")
 
         elif message.name == "lap":
             # TODO: extract per-split pace, HR, distance, elevation
@@ -45,14 +52,37 @@ def parse_fit(filepath: str) -> Run:
             # TODO: create fit_data entries for each GPS point, including timestamp, lat/lon, speed, heart rate, 
             #       and calculate effort pace and HR zone for each point and elevation if available and step_length if available
             #       and cadence if available
-            pass
+            fit_data_entry = {
+                "timestamp": message.get_value("timestamp"),
+                "position_lat": semicircles_to_degrees(message.get_value("position_lat")),
+                "position_long": semicircles_to_degrees(message.get_value("position_long")) ,
+                "speed": message.get_value("speed"),
+                "heart_rate": message.get_value("heart_rate"),
+                "heart_rate_zone": hr_to_zone(message.get_value("heart_rate")),
+                "elevation": message.get_value("altitude"),
+                "step_length": message.get_value("step_length"),
+                "cadence": message.get_value("cadence"),
+                "power": message.get_value("power"),
+                "run_id": run_uuid  # associate this FitData entry with the Run we created above
+            }
+            total_distance_run = message.get_value("distance")
+            total_power = message.get_value("accumulated_power")
+            fit_data.append(fit_data_entry)  # <-- this line was missing
+
         elif message.name == "activity":
             # TODO: extract activity-level information
             run_data["total_duration_s"] = message.get_value("total_timer_time")
             run_data["start_time"] = message.get_value("timestamp")
 
-    return Run(name="My Run", run_duration_s=run_data["run_duration_s"])  # placeholder until we implement the parsing logic
+   # after the for loop:
+    with Session() as session:
+        run = Run(id=run_uuid, name="My Run", run_duration_s=run_data.get("total_duration_s"), distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"))
+        session.add(run)
+        session.flush()  # inserts the run and makes its ID available without committing yet
+        session.add_all([FitData(**entry) for entry in fit_data])
+        session.commit()  # commits both run and fit_data together
 
+    return run
 
 def hr_to_zone(hr: int) -> int:
     """
@@ -72,6 +102,7 @@ def speed_to_pace(speed_ms: float) -> int:
     return 0
 
 
-def semicircles_to_degrees(semicircles: int) -> float:
-    """Convert .fit file semicircle coordinates to degrees."""
+def semicircles_to_degrees(semicircles: int) -> float | None:
+    if semicircles is None:
+        return None
     return semicircles * (180 / 2**31)
