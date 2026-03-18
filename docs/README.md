@@ -149,7 +149,7 @@ requirements.txt
 models/
   runner.py             # Runner profile (you)
   run.py                # One row per activity
-  fit_data.py           # imported data points from .fit files
+  running_data.py           # imported data points from .fit files
 
 commands/
   import_run.py         # `python app.py import`

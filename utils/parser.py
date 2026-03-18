@@ -4,7 +4,7 @@ from db import Session
 from fitparse import FitFile
 from models.run import Run
 from models.runner import Runner
-from models.fit_data import FitData
+from models.running_data import FitData
 from db import Session
 
 import warnings
@@ -32,7 +32,7 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
     fitfile = FitFile(filepath)
 
     run_data   = {}
-    fit_data: list[dict] = []
+    running_data: list[dict] = []
     splits     = []
     gps_points = []
     hr_seconds = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
@@ -52,10 +52,10 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
             pass
 
         elif message.name == "record":
-            # TODO: create fit_data entries for each GPS point, including timestamp, lat/lon, speed, heart rate, 
+            # TODO: create running_data entries for each GPS point, including timestamp, lat/lon, speed, heart rate, 
             #       and calculate effort pace and HR zone for each point and elevation if available and step_length if available
             #       and cadence if available
-            fit_data_entry = {
+            running_data_entry = {
                 "timestamp": message.get_value("timestamp"),
                 "position_lat": semicircles_to_degrees(message.get_value("position_lat")),
                 "position_long": semicircles_to_degrees(message.get_value("position_long")) ,
@@ -70,7 +70,7 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
             }
             total_distance_run = message.get_value("distance")
             total_power = message.get_value("accumulated_power")
-            fit_data.append(fit_data_entry)  # <-- this line was missing
+            running_data.append(running_data_entry)  # <-- this line was missing
 
             calculate_time_in_zones(run_data, message.get_value("heart_rate"), runner)
 
@@ -82,9 +82,9 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
             run_data["start_time"] = message.get_value("timestamp")
 
 
-    # Calculate averages, and min/max values for the Run model based on the fit_data and splits
-    pace_values = [entry["speed"] for entry in fit_data if entry.get("speed") is not None]
-    hr_values = [entry["heart_rate"] for entry in fit_data if entry.get("heart_rate") is not None]
+    # Calculate averages, and min/max values for the Run model based on the running_data and splits
+    pace_values = [entry["speed"] for entry in running_data if entry.get("speed") is not None]
+    hr_values = [entry["heart_rate"] for entry in running_data if entry.get("heart_rate") is not None]
 
     max_hr = max(hr_values) if hr_values else None
     avg_hr = int(sum(hr_values) / len(hr_values)) if hr_values else None
@@ -112,8 +112,8 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
         )
         session.add(run)
         session.flush()  # inserts the run and makes its ID available without committing yet
-        session.add_all([FitData(**entry) for entry in fit_data])
-        session.commit()  # commits both run and fit_data together
+        session.add_all([FitData(**entry) for entry in running_data])
+        session.commit()  # commits both run and running_data together
 
     return run
 

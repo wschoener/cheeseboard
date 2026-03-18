@@ -46,7 +46,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from db import Base
 
 class FitData(Base):
-    __tablename__ = "fit_data"
+    __tablename__ = "running_data"
     
     id = Column(Integer, primary_key=True)
     run_id = Column(UUID(as_uuid=True), ForeignKey("runs.id"), nullable=False)    

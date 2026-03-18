@@ -18,7 +18,7 @@ class Base(DeclarativeBase):
 
 def init_db():
     """Create all tables from models. Call once on first run."""
-    from models import run, fit_data, runner  # noqa: F401
+    from models import run, running_data, runner  # noqa: F401
 
     Base.metadata.create_all(engine)
     print("Database initialized.")
