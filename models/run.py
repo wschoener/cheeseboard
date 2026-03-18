@@ -21,17 +21,17 @@ class Run(Base):
     
     avg_hr        = Column(Integer)                    # bpm
     max_hr        = Column(Integer)
-    time_in_zone_1 = Column(Interval)                   # time in HR zone 1 (recovery)
-    time_in_zone_2 = Column(Interval)                   # time in HR zone 2 (endurance)
-    time_in_zone_3 = Column(Interval)                   # time in HR zone 3 (threshold)
-    time_in_zone_4 = Column(Interval)                   # time in HR zone 4 (VO2 max)
-    time_in_zone_5 = Column(Interval)                   # time in HR zone 5 (anaerobic)
+    time_in_zone_1 = Column(Integer)                   # time in HR zone 1 (recovery)
+    time_in_zone_2 = Column(Integer)                   # time in HR zone 2 (endurance)
+    time_in_zone_3 = Column(Integer)                   # time in HR zone 3 (threshold)
+    time_in_zone_4 = Column(Integer)                   # time in HR zone 4 (VO2 max)
+    time_in_zone_5 = Column(Integer)                   # time in HR zone 5 (anaerobic)
 
     elevation_gain_m = Column(Numeric(8, 2))
     imported_at   = Column(DateTime, server_default=func.now())
 
-    # runner_id     = Column(Integer, ForeignKey("runners.id"), nullable=False)
-    # runner        = relationship("Runner", back_populates="runs")
+    runner_id     = Column(Integer, ForeignKey('runners.id'))
+    runner        = relationship("Runner")
 
     def distance_miles(self):
         """TODO: convert self.distance_m to miles and return."""

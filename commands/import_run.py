@@ -215,10 +215,17 @@ def import_cmd(filepath, runner):
 
     console.print(f"[bold]Parsing[/bold] {filepath}...")
 
+    # Fetch the runner from the database by username
+    with Session() as session:
+        runner_obj = session.query(Runner).filter(Runner.username == runner).first()
+        if not runner_obj:
+            console.print(f"[red]Error: Runner '{runner}' not found.[/red]")
+            return
+    
     fitfile = fitparse.FitFile(filepath)
 
     # create a Run object from the parsed .fit file data, including its Splits, HRZone, and GPSPoints
-    logged_run = parse_fit(filepath, runner)
+    logged_run = parse_fit(filepath, runner_obj)
 
     # save the Run (and its related Splits, HRZone, and GPSPoints) to the database using Session
     with Session() as session:

@@ -1,3 +1,4 @@
+from anyio import run
 import uuid
 from db import Session
 from fitparse import FitFile
@@ -71,6 +72,8 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
             total_power = message.get_value("accumulated_power")
             fit_data.append(fit_data_entry)  # <-- this line was missing
 
+            calculate_time_in_zones(run_data, message.get_value("heart_rate"), runner)
+
             run_data["run_duration"] += 1  # assuming each record is 1 second apart, increment total run duration
 
         elif message.name == "activity":
@@ -89,7 +92,24 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
 
     # after the for loop:
     with Session() as session:
-        run = Run(id=run_uuid, name="My Run", distance_m=total_distance_run, total_power=total_power, start_date_time=run_data.get("start_date_time"), avg_hr=avg_hr, max_hr=max_hr, avg_pace_s=avg_pace_s, total_duration_s=run_data.get("total_timer_time"), run_duration_s=run_data.get("run_duration"))
+        run = Run(
+            id=run_uuid,
+            name="My Run",
+            runner_id=runner.id,
+            distance_m=total_distance_run,
+            total_power=total_power,
+            start_date_time=run_data.get("start_date_time"),
+            avg_hr=avg_hr,
+            max_hr=max_hr,
+            avg_pace_s=avg_pace_s,
+            total_duration_s=run_data.get("total_timer_time"),
+            run_duration_s=run_data.get("run_duration"),
+            time_in_zone_1=run_data.get("time_in_zone_1"),
+            time_in_zone_2=run_data.get("time_in_zone_2"),
+            time_in_zone_3=run_data.get("time_in_zone_3"),
+            time_in_zone_4=run_data.get("time_in_zone_4"),
+            time_in_zone_5=run_data.get("time_in_zone_5"),
+        )
         session.add(run)
         session.flush()  # inserts the run and makes its ID available without committing yet
         session.add_all([FitData(**entry) for entry in fit_data])
@@ -119,3 +139,21 @@ def semicircles_to_degrees(semicircles: int) -> float | None:
     if semicircles is None:
         return None
     return semicircles * (180 / 2**31)
+
+def calculate_time_in_zones(run_data: dict, hr: int, runner: Runner) -> None:
+    """
+    Look at heart rate in message, compare to runner's HR zones, and increment time in the appropriate zone in run_data.
+    """
+    if hr is None:
+        return
+
+    if runner.hr_zone_1_stop and hr <= runner.hr_zone_1_stop:
+        run_data["time_in_zone_1"] = run_data.get("time_in_zone_1", 0) + 1
+    elif runner.hr_zone_2_stop and hr <= runner.hr_zone_2_stop:
+        run_data["time_in_zone_2"] = run_data.get("time_in_zone_2", 0) + 1
+    elif runner.hr_zone_3_stop and hr <= runner.hr_zone_3_stop:
+        run_data["time_in_zone_3"] = run_data.get("time_in_zone_3", 0) + 1
+    elif runner.hr_zone_4_stop and hr <= runner.hr_zone_4_stop:
+        run_data["time_in_zone_4"] = run_data.get("time_in_zone_4", 0) + 1
+    elif runner.hr_zone_5_stop and hr <= runner.hr_zone_5_stop:
+        run_data["time_in_zone_5"] = run_data.get("time_in_zone_5", 0) + 1
