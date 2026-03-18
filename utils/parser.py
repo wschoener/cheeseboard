@@ -4,7 +4,7 @@ from db import Session
 from fitparse import FitFile
 from models.run import Run
 from models.runner import Runner
-from models.running_data import FitData
+from models.running_data import RunningData
 from db import Session
 
 import warnings
@@ -66,7 +66,7 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
                 "step_length": message.get_value("step_length"),
                 "cadence": message.get_value("cadence"),
                 "power": message.get_value("power"),
-                "run_id": run_uuid  # associate this FitData entry with the Run we created above
+                "run_id": run_uuid  # associate this RunningData entry with the Run we created above
             }
             total_distance_run = message.get_value("distance")
             total_power = message.get_value("accumulated_power")
@@ -80,6 +80,38 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
             # TODO: extract activity-level information
             run_data["total_duration_s"] = message.get_value("total_timer_time")
             run_data["start_time"] = message.get_value("timestamp")
+
+        elif message.name == "session":
+            # TODO: add in run data from the session message
+            """
+            = TYPE=2 NAME=session NUMBER=18
+            --- sport=1=running
+            --- start_time=1142078881=2026-03-10T12:08:01Z
+            --- timestamp=1142081109=2026-03-10T12:45:09Z
+            --- total_elapsed_time=2227300=2227.300 s
+            --- total_timer_time=2120530=2120.530 s
+            --- total_distance=623701=6237.01 m
+            --- total_calories=523=523 kcal
+            --- max_heart_rate=177=177 bpm
+            --- min_heart_rate=82=82 bpm
+            --- avg_heart_rate=157=157 bpm
+            --- avg_temperature=21=21 deg.C
+            --- total_ascent=41=41 m
+            --- total_descent=55=55 m
+            --- total_strides=2972=2972 strides
+            --- max_running_cadence=90=90 strides/min
+            --- avg_running_cadence=83=83 strides/min
+            --- avg_step_length=10600=1060.0 mm
+            --- max_speed=3546=12.766 km/h
+            --- avg_speed=2941=10.588 km/h
+            --- avg_power=226=226 watts
+            --- avg_stance_time=2340=234.0 ms
+            --- avg_stance_time_balance=0=0.00 %
+            --- avg_vertical_oscillation=990=99.0 mm
+            --- avg_vertical_ratio=950=9.50 %
+            --- 0_16_Effort_Pace=2.95799994468689=2.95799994468689
+            """
+            pass
 
 
     # Calculate averages, and min/max values for the Run model based on the running_data and splits
@@ -112,7 +144,7 @@ def parse_fit(filepath: str, runner: Runner) -> Run:
         )
         session.add(run)
         session.flush()  # inserts the run and makes its ID available without committing yet
-        session.add_all([FitData(**entry) for entry in running_data])
+        session.add_all([RunningData(**entry) for entry in running_data])
         session.commit()  # commits both run and running_data together
 
     return run
